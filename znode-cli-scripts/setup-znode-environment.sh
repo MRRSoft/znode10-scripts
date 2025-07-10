@@ -426,7 +426,8 @@ fi
 
 done
 
-
+#Setting znode nuget source to the value passed by user if not then default to the production source
+ZNODE_NUGET_SOURCE={$ZNODE_NUGET_SOURCE:-"https://nuget.znode.com/nuget"}
 
 info "Configuring NuGet sources and installing/updating the Znode CLI..."
 
@@ -436,7 +437,7 @@ dotnet nuget remove source "NugetZnode10xCLI" > /dev/null 2>&1 || true
 
 # Add the authenticated Znode source
 
-dotnet nuget add source "https://nuget.znode.com/nuget" -n "NugetZnode10xCLI" -u "$ZNODE_NUGET_USER" -p "$ZNODE_NUGET_PASS" --store-password-in-clear-text > /dev/null
+dotnet nuget add source "$ZNODE_NUGET_SOURCE" -n "NugetZnode10xCLI" -u "$ZNODE_NUGET_USER" -p "$ZNODE_NUGET_PASS" --store-password-in-clear-text > /dev/null
 
 # Install or update the Znode CLI tool
 
