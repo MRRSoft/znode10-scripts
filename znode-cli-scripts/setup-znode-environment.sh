@@ -441,7 +441,7 @@ dotnet nuget add source "$ZNODE_NUGET_SOURCE" -n "NugetZnode10xCLI" -u "$ZNODE_N
 
 # Install or update the Znode CLI tool
 
-dotnet tool install --global Znode.CLI > /dev/null
+dotnet tool install --global Znode.CLI 
 
 success "Znode CLI tool installed/updated successfully."
 
