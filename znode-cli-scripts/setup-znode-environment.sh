@@ -427,7 +427,7 @@ fi
 done
 
 #Setting znode nuget source to the value passed by user if not then default to the production source
-ZNODE_NUGET_SOURCE={$ZNODE_NUGET_SOURCE:-"https://nuget.znode.com/nuget"}
+ZNODE_NUGET_SOURCE=${ZNODE_NUGET_SOURCE:-"https://nuget.znode.com/nuget"}
 
 info "Configuring NuGet sources and installing/updating the Znode CLI..."
 
