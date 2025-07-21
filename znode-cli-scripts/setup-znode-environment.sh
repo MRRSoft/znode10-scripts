@@ -170,6 +170,9 @@ info "Why? Servers monitor many files. The default Linux limits are often too lo
 
 
 # Inotify limit
+# Clean old entries to avoid duplication
+sudo sed -i '/^fs.inotify.max_user_watches\s*=/d' /etc/sysctl.conf
+sudo sed -i '/^fs.inotify.max_user_instances\s*=/d' /etc/sysctl.conf
 
 if ! grep -q "fs.inotify.max_user_watches=524288" /etc/sysctl.conf; then
 
@@ -192,6 +195,9 @@ fi
 
 
 # File descriptor limit
+# Remove old nofile entries
+sudo sed -i '/^\*\s\+soft\s\+nofile/d' /etc/security/limits.conf
+sudo sed -i '/^\*\s\+hard\s\+nofile/d' /etc/security/limits.conf
 
 if ! grep -q "* soft nofile 65536" /etc/security/limits.conf; then
 
