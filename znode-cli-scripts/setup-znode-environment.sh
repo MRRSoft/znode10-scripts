@@ -234,53 +234,34 @@ fi
 
 echo
 
-
-
-# --- 3. Install .NET 8 SDK ---
-
+# --- 3. Configure Microsoft Repository and Install Tools ---
 info "Step 3: Checking for and installing the .NET 8 SDK."
-
 info "Why? The Znode CLI is a .NET application and requires the .NET SDK to run."
+# Add Microsoft GPG key securely
+curl -sSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
 
-if command -v dotnet &> /dev/null && dotnet --list-sdks | grep -q "^8\."; then
+# Create a single, correct repository file
+echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/$(lsb_release -rs)/prod $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/microsoft-prod.list > /dev/null
 
-success ".NET SDK 8.x is already installed. Version: $(dotnet --version)"
-
-else
-
-info "Installing .NET 8 SDK..."
-
-# Add Microsoft package repository
-
-wget -q https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-
-sudo dpkg -i packages-microsoft-prod.deb > /dev/null
-
-rm packages-microsoft-prod.deb
-
-
-# Install .NET SDK
-
+# Update apt cache and install all tools at once
+info "Updating package list from the new repository..."
 sudo apt-get update -qq
 
-sudo apt-get install -y dotnet-sdk-8.0 > /dev/null
-
-success ".NET SDK 8.0 installation completed. Version: $(dotnet --version)"
-
+# Install .NET SDK
+if command -v dotnet &> /dev/null && dotnet --list-sdks | grep -q "^8\."; then
+    success ".NET SDK 8.x is already installed."
+else
+    info "Installing .NET 8 SDK..."
+    sudo apt-get install -y dotnet-sdk-8.0 > /dev/null
+    success ".NET SDK 8.0 installation completed."
 fi
 
-echo
-
-
-# --- 4. Install SQL Server Tools (sqlcmd) ---
 info "Step 4: Checking for and installing SQL Server command-line tools (sqlcmd)."
 info "Why? 'sqlcmd' is a utility used for interacting with SQL Server databases from the command line."
+# Install SQL Server Tools
 if ! command -v sqlcmd &> /dev/null; then
-    info "Installing 'sqlcmd'..."
-    # The repository is already configured by the .NET SDK step.
-    # We just need to update and install.
-    sudo apt-get update -qq
-    info "Installing mssql-tools18... This requires accepting an EULA."
+    info "Installing SQL Server command-line tools (sqlcmd)..."
+    info "This requires accepting an EULA."
     if ! sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18 unixodbc-dev > /dev/null; then
         error "Failed to install mssql-tools18. Please try installing it manually."
     fi
