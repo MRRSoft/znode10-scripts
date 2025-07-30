@@ -272,52 +272,23 @@ fi
 echo
 
 
-
 # --- 4. Install SQL Server Tools (sqlcmd) ---
-
 info "Step 4: Checking for and installing SQL Server command-line tools (sqlcmd)."
-
 info "Why? 'sqlcmd' is a utility used for interacting with SQL Server databases from the command line."
-
 if ! command -v sqlcmd &> /dev/null; then
-
-info "Installing 'sqlcmd'..."
-
-if ! curl -sS https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc > /dev/null; then
-
-error "Failed to add Microsoft GPG key for sqlcmd."
-
-fi
-
-if ! curl -sS https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list > /dev/null; then
-
-error "Failed to register Microsoft repository for sqlcmd."
-
-fi
-
-
-
-sudo apt-get update -qq
-
-info "Installing mssql-tools18... This requires accepting an EULA."
-
-if ! sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18 unixodbc-dev > /dev/null; then
-
-error "Failed to install mssql-tools18. Please try installing it manually."
-
-fi
-
-success "'sqlcmd' has been installed."
-
+    info "Installing 'sqlcmd'..."
+    # The repository is already configured by the .NET SDK step.
+    # We just need to update and install.
+    sudo apt-get update -qq
+    info "Installing mssql-tools18... This requires accepting an EULA."
+    if ! sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18 unixodbc-dev > /dev/null; then
+        error "Failed to install mssql-tools18. Please try installing it manually."
+    fi
+    success "'sqlcmd' has been installed."
 else
-
-success "'sqlcmd' is already installed."
-
+    success "'sqlcmd' is already installed."
 fi
-
 echo
-
-
 
 # --- 7. Configure Environment PATH (Done here to ensure tools are found) ---
 
