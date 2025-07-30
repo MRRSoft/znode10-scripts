@@ -143,7 +143,16 @@ fi
 
 echo
 
-
+# --- 0. Pre-flight Cleanup ---
+info "Step 0: Cleaning up old Microsoft repository configurations to prevent conflicts."
+sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+sudo rm -f /etc/apt/sources.list.d/mssql-release.list
+sudo rm -f /usr/share/keyrings/microsoft-prod.gpg
+sudo rm -f /etc/apt/trusted.gpg.d/microsoft.asc
+# Update apt cache after cleanup
+sudo apt-get update -qq
+success "System is clean and ready for installation."
+echo
 
 # --- 1. Install Essential Tools ---
 
